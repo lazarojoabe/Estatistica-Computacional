@@ -113,10 +113,8 @@ for(i in 1:100000){
   somaInicial <- dado1 + dado2
   somaFinal <- 0
   if(somaInicial == 7 | somaInicial == 1){
-    #print("Vc ganhou")
     propVitoria <- propVitoria + 1
   }else if(somaInicial == 2| somaInicial == 3 | somaInicial == 12){
-    #print("Vc perdeu")
   } else {
     while(somaFinal != 7 & somaFinal != somaInicial){
       dado1 <- sample(x = 1:6, size = 1, replace = TRUE)
@@ -125,7 +123,6 @@ for(i in 1:100000){
       somaFinal <- dado1 + dado2
       
       if(somaFinal == 7){
-        #print("vc perdeu")
       } else if(somaFinal == somaInicial){
         propVitoria <- propVitoria + 1
       }
