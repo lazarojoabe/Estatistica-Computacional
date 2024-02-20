@@ -122,7 +122,7 @@ jubarte <- treino[treino$especie == "Jubarte",]
 media_Cachalote <- mean(cachalote$peso)
 variancia_Cachalote <- var(cachalote$peso)
 desvioPadrao_Cachalote <- sd(cachalote$peso)
-CV_Cachalote <- 100 * (desvio_PadraoCachalote/media_Cachalote)
+CV_Cachalote <- 100 * (desvioPadrao_Cachalote/media_Cachalote)
 
 media_BaleiaAzul <- mean(baleiaAzul$peso)
 variancia_BaleiaAzul <- var(baleiaAzul$peso)
@@ -145,3 +145,18 @@ CV_Jubarte <- 100 * (desvioPadrao_Jubarte/media_Jubarte)
 #Podemos observar também que em todos os conjuntos a variância é significativamente maior do que a média, o que indica uma dispersão nos dados.
 
 #como o desvio padrão dos conjuntos é de 14%(Cachalote), 7%(Baleia Azul), 9%(Baleia Fin) e 12% Jubarte, podemos classificar que a Baleia Azul tem uma dispersão moderada, entretanto as outras baleias têm uma dispersão consideravelmente alta.
+
+#c)
+
+hist(baleiaAzul$peso, ylim = c(0, 20))
+
+#Ao analisar o histograma, podemos perceber que a forma em que os dados foram distribuídos é parecida com a distribuição normal; a exceção é a ausência de baleias cujo peso varie entre 23000 a 24000kg.
+
+#d)
+ggplot(treino, aes(x = comprimento))+
+  geom_boxplot()+
+  facet_wrap(~especie)+
+  coord_flip()
+#Observando os boxplots para cada espécie, é possível observar que há uma medida de comprimento que parece ser característica de cada espécie. Assim, a Baleia Azul tem o seu comprimento concentrado entre 28 a 32 metros; a Baleia Fin entre 24 e 26m; a Cachalote entre 18 e 21m; e a Jubarte de 17 a 19m.
+# Todavia, percebe-se que há baleias de espécies distintas mas com o comprimento igual; esse é o caso da Cachalote e Jubarte. A interseção entre o comprimento desses animais está entre 17,5 e 19m, aproximadamente
+
