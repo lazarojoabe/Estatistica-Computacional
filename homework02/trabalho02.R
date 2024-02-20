@@ -65,8 +65,13 @@ barplot(freq, ylim= c(0, 200), xlab = "Sexo", ylab = "Frequência")
 #   Ao analisar o gráfico, podemos observar que a quantidade de mulheres é aproximadamente 4 vezes maior qua de homens
 
 #b)
-hist(dados$Idade, breaks = 9, xlab = "Idade", ylab = "Frequência")
+#hist(dados$Idade, breaks = 8, xlab = "Idade", ylab = "Frequência")
+dados$idade <- as.numeric(dados$idade)
+hist(dados$idade, breaks = 8)
 
+
+hist(dados$Idade)+
+  geom_bar(bins = 8)
 #c)
 boxplot(dados$Idade)
 # - 25% das vítimas tem 70 anos ou menos
