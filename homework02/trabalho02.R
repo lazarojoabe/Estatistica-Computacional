@@ -170,7 +170,7 @@ respostas <- c()
 for (i in 1:nrow(teste)){
   if(teste$profundidade_maxima[i] < 175){
     respostas[i] <- "Cachalote" 
-  } else if(teste$profundidade_maxima[i] < 210){
+  } else if(teste$profundidade_maxima[i] < 209){
     respostas[i] <- "Jubarte"
   } else {
     if(teste$comprimento[i] < 27){
@@ -186,5 +186,43 @@ mean(respostas == teste$especie)
 
 #G)
 
-graficoDisp <- ggplot(data = treino, aes(x = comprimento, y = profundidade_maxima, color = especie))+
+ggplot(data = treino, aes(x = comprimento, y = profundidade_maxima, color = especie))+
+  geom_point()+
+  geom_hline(yintercept = 175, linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 209, linetype = "dashed", color = "black") +
+  geom_vline(xintercept = 27, linetype = "dashed", color = "blue")
+
+#H)
+
+
+
+
+#4)
+
+cogumelos <- read.csv("cogumelos.csv", header = TRUE)
+
+n <- round(nrow(cogumelos) * 0.8)
+treinamento <- cogumelos[1:n, ]
+teste <- cogumelos[-(1:n)]
+
+#Podemos observar que cogumelos com tampa de cores c, r, u estão em menor quantidade, entretanto, todos aqueles que possuem essa cor em sua tampa são comestíveis.
+ggplot(data = treinamento, aes(x = class, color = class))+
+  geom_bar()+
+  facet_wrap(~cap.color)
+
+#Plotanto o tipo de população dos cogumelos em função de ser comestível ou não, podemos observar que cogumelos cuja população é abundante(a) ou numerosa(n) são todos comestíveis
+
+#Podemos observar que todos os cogumelos que estão situados no habitat de deserto são comestíveis
+ggplot(data = treinamento, aes(x = habitat, colour = class))+
+  geom_bar()
+
+#Observa-se que cogumelos que apresentam odor duvidoso(y), picante(s) ou pungente(p) são venenosos
+ggplot(data = treinamento, aes(x = class, y = odor))+
   geom_point()
+
+#Podemos perceber que os cogumelos com talos enraizados(e) são comestíveis
+ggplot(data = treinamento, aes(x = class, y = stalk.root))+
+  geom_point()
+
+
+
