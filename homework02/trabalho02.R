@@ -160,3 +160,31 @@ ggplot(treino, aes(x = comprimento))+
 #Observando os boxplots para cada espécie, é possível observar que há uma medida de comprimento que parece ser característica de cada espécie. Assim, a Baleia Azul tem o seu comprimento concentrado entre 28 a 32 metros; a Baleia Fin entre 24 e 26m; a Cachalote entre 18 e 21m; e a Jubarte de 17 a 19m.
 # Todavia, percebe-se que há baleias de espécies distintas mas com o comprimento igual; esse é o caso da Cachalote e Jubarte. A interseção entre o comprimento desses animais está entre 17,5 e 19m, aproximadamente
 
+#E)
+ggplot(data = treino, aes(x = comprimento, y = profundidade_maxima, color = especie))+
+  geom_point()
+
+#F)
+abline(h = 175)
+respostas <- c()
+for (i in 1:nrow(teste)){
+  if(teste$profundidade_maxima[i] < 175){
+    respostas[i] <- "Cachalote" 
+  } else if(teste$profundidade_maxima[i] < 210){
+    respostas[i] <- "Jubarte"
+  } else {
+    if(teste$comprimento[i] < 27){
+    respostas[i] <- "Baleia Fin"
+    } else {
+    respostas[i] <- "Baleia Azul"
+    }
+  }
+}
+mean(respostas == teste$especie)
+
+#Após implementar o modelo de Árvore de Decisão, obtemos uma taxa de acerto de 90%. Foi possível e viável aplicar esse modelo ao nosso conjunto de dados nessas variáveis porque, analisando o gráfico de dispersão, podemos notar um certo padrão de agrupamento dos dados; há uma forte tendência de que uma baleia de uma dada espécie tenha como característa um valor de profundidade máxima e comprimento que esteja presente em um intervalo bem definido.
+
+#G)
+
+graficoDisp <- ggplot(data = treino, aes(x = comprimento, y = profundidade_maxima, color = especie))+
+  geom_point()
