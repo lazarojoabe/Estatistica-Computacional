@@ -193,24 +193,43 @@ ggplot(data = treino, aes(x = comprimento, y = profundidade_maxima, color = espe
   geom_vline(xintercept = 27, linetype = "dashed", color = "blue")
 
 #H)
+treino$especie <- as.factor(treino$especie)
+teste$especie <- as.factor(teste$especie)
+library(class)
 
 
+modelo_k1 <- knn(train = treino[, -1], test = teste[, -1], cl = treino$especie, k = 1)
 
+modelo_k3 <- knn(train = treino[, -1], test = teste[, -1], cl = treino$especie, k = 3)
 
+mean(modelo_k1 == teste$especie)
+mean(modelo_k3 == teste$especie)
+
+#Comparando a taxa de acertos do modelo knn utilizando k = 1 com o modelo que usa k = 3, obtivemos uma taxa igual em ambos, 98%
 #4)
 
 cogumelos <- read.csv("cogumelos.csv", header = TRUE)
+library(ggplot2)
 
+cogumelos <- as.data.frame(lapply(cogumelos, as.factor))
+cogumelos <- cogumelos[sample(nrow(cogumelos)), ]
+
+#cogumelos$class <- as.factor(cogumelos$class)
 n <- round(nrow(cogumelos) * 0.8)
 treinamento <- cogumelos[1:n, ]
-teste <- cogumelos[-(1:n)]
+teste_cogumelos <- cogumelos[(n+1):nrow(cogumelos), ]
 
-#Podemos observar que cogumelos com tampa de cores c, r, u estão em menor quantidade, entretanto, todos aqueles que possuem essa cor em sua tampa são comestíveis.
+
+#Podemos observar que cogumelos com tampa de cores r e u estão em menor quantidade, entretanto, todos aqueles que possuem essa cor em sua tampa são comestíveis.
 ggplot(data = treinamento, aes(x = class, color = class))+
   geom_bar()+
   facet_wrap(~cap.color)
 
 #Plotanto o tipo de população dos cogumelos em função de ser comestível ou não, podemos observar que cogumelos cuja população é abundante(a) ou numerosa(n) são todos comestíveis
+
+ggplot(data = treinamento, aes(x = population))+
+  geom_bar()+
+  facet_wrap(~class)
 
 #Podemos observar que todos os cogumelos que estão situados no habitat de deserto são comestíveis
 ggplot(data = treinamento, aes(x = habitat, colour = class))+
@@ -225,4 +244,35 @@ ggplot(data = treinamento, aes(x = class, y = stalk.root))+
   geom_point()
 
 
+#Com esse gráfico do tipo de anel em função de ser comestível, podemos observar que cogumelos com o tipo de anel f são sempre comestíveis, enquanto que anel do tipo l e n são sempre venenosos
+ggplot(data = treinamento, aes(x = ring.type, y = class))+
+  geom_point()
+#*****interseções entre comestível e não é ring type = e, ring.type = p***
 
+
+#cogumelos com tipo de anel e são comestiveis sse sua população for v; se o tipo de anel for  p, são comestíveis sse a população for c
+
+respostas_cogumelos <- c()
+for (i in 1:nrow(teste_cogumelos)) {
+  if (teste_cogumelos$ring.type[i] == "f") {
+    respostas_cogumelos[i] <- "e"
+  } else if (teste_cogumelos$ring.type[i] %in% c("l", "n")) {
+    respostas_cogumelos[i] <- "p"  
+  } else if ((teste_cogumelos$veil.color[i] == "y" | teste_cogumelos$veil.color[i] == "w") & teste_cogumelos$ring.type[i] == "e") {
+    respostas_cogumelos[i] <- "e"
+  } else if ((teste_cogumelos$veil.color[i] == "w" | teste_cogumelos$veil.color[i] == "o" | teste_cogumelos$veil.color[i] == "n") & teste_cogumelos$ring.type[i] == "p") {
+    respostas_cogumelos[i] <- "p"
+  }
+}
+
+mean(respostas_cogumelos == teste_cogumelos$class)
+ggplot(data = treinamento, aes(x = ring.type, y = veil.color, color= class))+
+  geom_point()
+
+
+ggplot(data = treinamento, aes(x = veil.color, y = class))+
+  geom_point()
+
+
+ggplot(data = treinamento, aes(x = cap.surface, y = class))+
+  geom_point()
