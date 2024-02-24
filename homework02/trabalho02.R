@@ -1,14 +1,24 @@
 #1
+#Função auxiliar
+realizaNovoLancamento <- function(lancamento){
+  novoLancamento <- sample(x = c(0,1), size = 1)
+  lancamento <- c(lancamento[length(lancamento) - 1], lancamento[length(lancamento)], novoLancamento)
+  
+  return(lancamento)
+}
+
 stevenAndGarnit <- function(){
   stevenVenceu <- FALSE
   garnitVenceu <- FALSE
   
   #evitando que os dois escolham a mesma sequencia
-  do{
+  Steven <- c(sample(x = c(0, 1), size = 3, replace = TRUE))
+  Garnit <- c(sample(x = c(0, 1), size = 3, replace = TRUE))
+  
+  while (all(Steven == Garnit)) {
     Steven <- c(sample(x = c(0, 1), size = 3, replace = TRUE))
     Garnit <- c(sample(x = c(0, 1), size = 3, replace = TRUE))
-  } while(Steven != Garnit)
-  
+  }
   
   lancamento <- c(sample(x = c(0, 1), size = 3, replace = TRUE))
   
@@ -31,14 +41,6 @@ stevenAndGarnit <- function(){
     }
   }
 }
-
-realizaNovoLancamento <- function(lancamento){
-  novoLancamento <- sample(x = c(0,1), size = 1)
-  lancamento <- c(lancamento[length(lancamento) - 1], lancamento[length(lancamento)], novoLancamento)
-  
-  return(lancamento)
-}
-
 experimentoStevenAndGarnit <- stevenAndGarnit()
 print(experimentoStevenAndGarnit)
 
@@ -51,7 +53,7 @@ simulaStevenAndGarnit10milx <- function(){
 }
 
 paste("A proporção de vitórias da Garnit é de ", simulaStevenAndGarnit10milx())
-#   Ao executar o esperimento 10.000x, vemos que a proporção de vitórias da Garnit converge para 43%, o que signifca que a probabilidade do Steven ganhar é mais significante.
+#   Ao executar o esperimento 10.000x, vemos que a proporção de vitórias da Garnit converge para 50%, o que significa que a chance de qualquer um dos jogadores vencerem o jogo é praticamente igual.
 
 #2
 dados <- read.table(file = "dados.txt", header = TRUE, sep = ';')
@@ -144,7 +146,7 @@ CV_Jubarte <- 100 * (desvioPadrao_Jubarte/media_Jubarte)
 
 #Podemos observar também que em todos os conjuntos a variância é significativamente maior do que a média, o que indica uma dispersão nos dados.
 
-#como o desvio padrão dos conjuntos é de 14%(Cachalote), 7%(Baleia Azul), 9%(Baleia Fin) e 12% Jubarte, podemos classificar que a Baleia Azul tem uma dispersão moderada, entretanto as outras baleias têm uma dispersão consideravelmente alta.
+#como o desvio padrão dos conjuntos é de 14%(Cachalote), 7%(Baleia Azul), 9%(Baleia Fin) e 12% Jubarte, podemos classificar que as beleias têm uma dispersão moderada.
 
 #c)
 
@@ -211,6 +213,7 @@ mean(modelo_k3 == teste$especie)
 cogumelos <- read.csv("cogumelos.csv", header = TRUE)
 library(ggplot2)
 
+
 cogumelos <- as.data.frame(lapply(cogumelos, as.factor))
 cogumelos <- cogumelos[sample(nrow(cogumelos)), ]
 
@@ -244,35 +247,55 @@ ggplot(data = treinamento, aes(x = class, y = stalk.root))+
   geom_point()
 
 
-#Com esse gráfico do tipo de anel em função de ser comestível, podemos observar que cogumelos com o tipo de anel f são sempre comestíveis, enquanto que anel do tipo l e n são sempre venenosos
+#Com esse gráfico do tipo de anel em função de ser comestível, podemos observar que cogumelos com o tipo de anel f são sempre comestíveis, enquanto que anel do tipo l e n são sempre venenosos.
 ggplot(data = treinamento, aes(x = ring.type, y = class))+
   geom_point()
-#*****interseções entre comestível e não é ring type = e, ring.type = p***
 
 
-#cogumelos com tipo de anel e são comestiveis sse sua população for v; se o tipo de anel for  p, são comestíveis sse a população for c
+#** Essa observação sobre o tipo de anel é grande valor, pois, olhando somente para ela, podemos considerar como comestível ou venenosos, uma vez que 3 de 5 tipos de anel são apresentados em somente um tipo de classe.*
+#**Todavia, caso o tipo de anel seja evanescente(e) ou pedante(p), olhando somente para essa categoria, não é possível afirmar nada. Entretanto, se cruzarmos a cor de impressão com o tipo de anel, é notório que :*
 
+   
+#**Caso tenha um tipo de anel evanescente:  *
+#**    -se a cor de impressão for branca(w):*
+#**     -> então o cogumelo é venenoso      *
+#**    -se a cor de impressão for preto(k): *
+#**      -> então o cogumelo é comestível   *
+#**Caso tenha um tipo de anel pedante:      *
+#**    -se a cor de impressão for preta(k): *
+#**     -> então o cogumelo é venenoso      *
+#**    -se a cor de impressão for branca(w):*
+#**     -> então o cogumelo é comestível    *
+#*
+#** Assim, é como se a cor de impressão fosse uma espécie de "desempate" para os cogumelos que apresentem tipo de anel pedante ou evanescente, uma vez que não é possível determinar se é venenoso ou comestível olhando somente para esses tipos de anel.**
+
+ggplot(data = treinamento, aes(x = ring.type, y = class, color= spore.print.color))+
+  geom_point()
+#Construindo a árvore de decicisão
 respostas_cogumelos <- c()
 for (i in 1:nrow(teste_cogumelos)) {
   if (teste_cogumelos$ring.type[i] == "f") {
     respostas_cogumelos[i] <- "e"
   } else if (teste_cogumelos$ring.type[i] %in% c("l", "n")) {
     respostas_cogumelos[i] <- "p"  
-  } else if ((teste_cogumelos$veil.color[i] == "y" | teste_cogumelos$veil.color[i] == "w") & teste_cogumelos$ring.type[i] == "e") {
-    respostas_cogumelos[i] <- "e"
-  } else if ((teste_cogumelos$veil.color[i] == "w" | teste_cogumelos$veil.color[i] == "o" | teste_cogumelos$veil.color[i] == "n") & teste_cogumelos$ring.type[i] == "p") {
-    respostas_cogumelos[i] <- "p"
+  } else {
+    if(teste_cogumelos$ring.type[i] == "e"){
+      if(teste_cogumelos$spore.print.color[i] == "w"){
+        respostas_cogumelos[i] <- "p"
+      } else {
+        respostas_cogumelos[i] <- "e"
+      }
+    }
+    
+    if(teste_cogumelos$ring.type[i] == "p"){
+      if(teste_cogumelos$spore.print.color[i] == "h"){
+        respostas_cogumelos[i] <- "p"
+      } else {
+        respostas_cogumelos[i] <- "e"
+      }
+    }
   }
 }
 
 mean(respostas_cogumelos == teste_cogumelos$class)
-ggplot(data = treinamento, aes(x = ring.type, y = veil.color, color= class))+
-  geom_point()
-
-
-ggplot(data = treinamento, aes(x = veil.color, y = class))+
-  geom_point()
-
-
-ggplot(data = treinamento, aes(x = cap.surface, y = class))+
-  geom_point()
+#Utilizando o modelo de Árvore de Decisão Binária no conjunto de dados de cogumelos, obtivemos uma acurácia de mais de 90%, o que indica que esse modelo performa de maneira razoável sobre dados qualitativos.
